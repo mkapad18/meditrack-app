@@ -5,7 +5,7 @@ import RNPickerSelect from 'react-native-picker-select';
 import axios from 'axios';
 import DateTimePicker from 'react-native-ui-datepicker';
 import dayjs from 'dayjs';
-import { updateTest } from '../services/api';
+import { updateTest, getTestById } from '../services/api';
 
 const EditTestScreen = () => {
   const navigation = useNavigation();
@@ -24,8 +24,10 @@ const EditTestScreen = () => {
 
   const fetchTestDetails = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/tests/${testId}`);
+      console.log("getting test id from all test",testId);
+      const response = await getTestById(testId);
       const test = response.data;
+      console.log("test recieve from datasbae",test)
       setTestType(test.dataType);
       setReading(test.reading);
       setTestDate(dayjs(test.testDate)); // Assuming testDate is in ISO format
@@ -54,12 +56,12 @@ const EditTestScreen = () => {
       };
 
       // Make a PUT request to update the test
-      await updateTest(testId, updatedTest);
+      const response = await updateTest(testId, updatedTest);
       Alert.alert('Success', 'Test updated successfully!');
       fetchAllTests(); // Refresh the tests list
       navigation.goBack(); // Go back to the previous screen
     } catch (error) {
-      console.error("Error updating test:", error);
+      console.error("Error updating test:", error.response ? error.response.data : error.message);
       Alert.alert('Error', 'There was an issue updating the test.');
     }
   };

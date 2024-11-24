@@ -52,7 +52,7 @@ const AllTestsScreen = ({ route }) => {
               <TouchableOpacity 
                 style={styles.editButton}
                 onPress={() => navigation.navigate('EditTest', { 
-                  testId: test.id, 
+                  testId: test._id, 
                   patientId, 
                   fetchAllTests 
                 })}>

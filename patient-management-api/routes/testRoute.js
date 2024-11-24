@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getTestsByPatientId, addTest, getAllCriticalPatients, editTest } = require('../controllers/testController');
+const { getTestsByPatientId, addTest, getAllCriticalPatients, editTest, getTestById } = require('../controllers/testController');
 
 // Get all tests for a specific patient
 router.get('/:patientId/tests', getTestsByPatientId);
@@ -13,5 +13,8 @@ router.get('/critical', getAllCriticalPatients);
 
 // Edit a test by ID
 router.put('/:testId', editTest);
+
+// Get a test by ID
+router.get('/:testId', getTestById);
 
 module.exports = router;

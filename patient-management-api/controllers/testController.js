@@ -116,4 +116,18 @@ const editTest = async (req, res) => {
   }
 };
 
-module.exports = { getTestsByPatientId, addTest, getAllCriticalPatients, editTest };
+const getTestById = async (req, res) => {
+  const { testId } = req.params;
+  try {
+    const test = await Test.findById(testId);
+    if (!test) {
+      return res.status(404).json({ message: 'Test not found' });
+    }
+    res.json(test);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+module.exports = { getTestsByPatientId, addTest, getAllCriticalPatients, editTest, getTestById };

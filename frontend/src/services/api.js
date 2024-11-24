@@ -1,7 +1,7 @@
 // src/services/api.js
 import axios from 'axios';
 
-const API_URL = 'https://meditrack-app.onrender.com/';
+const API_URL = 'http://10.0.0.30:3000';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -24,9 +24,13 @@ export const getTestsByPatientId = (patientId) => api.get(`/api/tests/${patientI
 export const addPatientTest = (patientId, testData) => {
   api.post(`/api/tests/${patientId}/tests`, testData);
 };
-export const updateTest = (testId, updatedData) => api.put(`/api/tests/${testId}`, updatedData);
+export const updateTest = (testId, updatedData) => {
+  return api.put(`/api/tests/${testId}`, updatedData);
+};
 
 // Function to update patient status
 export const updatePatientStatus = (patientId, status) => 
   api.put(`/api/patients/update-status/${patientId}`, { status });
+
+export const getTestById = (testId) => api.get(`/api/tests/${testId}`);
 
