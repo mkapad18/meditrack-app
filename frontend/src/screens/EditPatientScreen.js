@@ -1,6 +1,6 @@
 // src/screens/EditPatientScreen.js
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, TextInput, Button, StyleSheet, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { getPatientById, updatePatient } from '../services/api';
 
 const EditPatientScreen = ({ route, navigation }) => {
@@ -75,10 +75,13 @@ const EditPatientScreen = ({ route, navigation }) => {
         onChangeText={setContactNumber}
         keyboardType="phone-pad"
       />
-      <Button title="Update Patient" onPress={handleUpdatePatient} color="#007AFF" />
+       <TouchableOpacity style={styles.btn}>
+      <Button title="Update Patient" onPress={handleUpdatePatient} color="#ffffff" />
+      </TouchableOpacity>
     </ScrollView>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -93,6 +96,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 5,
   },
+  btn:{
+    backgroundColor: '#044956',
+    color:'red',
+    borderRadius: 50,
+    overflow:'hidden',
+    paddingVertical: 3,
+    marginTop:20,
+    fontSize: 16,
+  }
 });
 
 export default EditPatientScreen;

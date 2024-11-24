@@ -1,7 +1,7 @@
 // src/services/api.js
 import axios from 'axios';
 
-const API_URL = 'http://10.0.0.30:3000';
+const API_URL = 'https://meditrack-app.onrender.com/';
 
 const api = axios.create({
   baseURL: API_URL,

@@ -1,6 +1,6 @@
 // src/screens/AddPatientScreen.js
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, TextInput, Button, StyleSheet, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { addPatient } from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -71,7 +71,9 @@ const AddPatientScreen = ({ navigation, route }) => {
         onChangeText={setContactNumber}
         keyboardType="phone-pad"
       />
-      <Button title="Add Patient" onPress={handleAddPatient} color="#044956" />
+      <TouchableOpacity style={styles.btn}>
+      <Button title="Add Patient" onPress={handleAddPatient} color="#ffffff" />
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -88,6 +90,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
   },
+  btn:{
+    backgroundColor: '#044956',
+    color:'red',
+    borderRadius: 50,
+    overflow:'hidden',
+    paddingVertical: 3,
+    marginTop:20,
+    fontSize: 16,
+  }
 });
 
 export default AddPatientScreen;

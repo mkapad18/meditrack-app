@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet, Image, Alert } from 'react-native';
+import { View, Text, Button, StyleSheet, Image, Alert, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { getLoggedInUser } from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -52,7 +52,9 @@ const ProfileScreen = () => {
       </View>
 
       {/* Logout Button */}
-      <Button title="Logout" onPress={handleLogout} color="#FF5733" />
+      <TouchableOpacity style={styles.btn}>
+      <Button title="Logout" onPress={handleLogout} color="#ffffff" />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -93,6 +95,15 @@ const styles = StyleSheet.create({
     color: '#666',
     marginBottom: 20,
   },
+  btn:{
+    backgroundColor: '#044956',
+    color:'red',
+    borderRadius: 50,
+    overflow:'hidden',
+    paddingVertical: 3,
+    marginTop:20,
+    fontSize: 16,
+  }
 });
 
 export default ProfileScreen;

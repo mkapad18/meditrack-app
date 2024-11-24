@@ -69,7 +69,7 @@ const DashboardScreen = ({ navigation }) => {
             </View>
             <TouchableOpacity 
                 style={styles.addButton}
-                onPress={() => navigation.navigate('AddPatient', { fetchAllCount })}>
+                onPress={() => navigation.navigate('AddPatient', { getAllCount })}>
                 <Icon name="add" size={24} color="white" />
             </TouchableOpacity>
         </ScrollView>

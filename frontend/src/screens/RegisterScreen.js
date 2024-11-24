@@ -98,7 +98,7 @@ const RegisterScreen = ({ navigation }) => {
         <TouchableOpacity style={styles.btn}>
             <Button 
               title={isLoading ? "Registering..." : "Register"} 
-              color={'#044956'}
+              color={'#ffffff'}
               onPress={handleRegister}
               disabled={isLoading}
             />
@@ -165,6 +165,7 @@ const styles = StyleSheet.create({
   },
   btn:{
     backgroundColor: '#044956',
+    color:'red',
     borderRadius: 50,
     overflow:'hidden',
     paddingVertical: 3,
