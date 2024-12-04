@@ -10,7 +10,7 @@ const AddPatientScreen = ({ navigation, route }) => {
   const [gender, setGender] = useState('');
   const [address, setAddress] = useState('');
   const [contactNumber, setContactNumber] = useState('');
-  const { getAllCount } = route.params;
+  const { fetchData,getAllCount } = route.params;
 
   const handleAddPatient = async () => {
     // Retrieve user ID from AsyncStorage
@@ -24,16 +24,12 @@ const AddPatientScreen = ({ navigation, route }) => {
       await addPatient(patientData);
       
       // Call fetchData from PatientsListScreen
-      route.params.getAllCount(); // Call fetchData passed from PatientsListScreen
-
+      fetchData(); // Call fetchData passed from PatientsListScreen
       Alert.alert('Success', 'Patient added successfully', [
-        { text: 'OK', onPress: () => navigation.navigate('PatientsList') }
+        { text: 'OK', onPress: () => navigation.navigate('PatientsList',{getAllCount}) }
       ]);
     } catch (error) {
       Alert.alert('Error', error.message || 'Failed to add patient');
-    }
-    if (getAllCount) {
-      getAllCount(); // Refresh the patient count on the dashboard
     }
     navigation.goBack();
   };
@@ -72,7 +68,7 @@ const AddPatientScreen = ({ navigation, route }) => {
         keyboardType="phone-pad"
       />
       <TouchableOpacity style={styles.btn}>
-      <Button title="Add Patient" onPress={handleAddPatient} color="#ffffff" />
+      <Button title="Add Patient" onPress={handleAddPatient} color="#004a59" />
       </TouchableOpacity>
     </ScrollView>
   );

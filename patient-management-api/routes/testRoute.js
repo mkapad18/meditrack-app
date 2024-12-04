@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getTestsByPatientId, addTest, getAllCriticalPatients, editTest, getTestById } = require('../controllers/testController');
+const { getTestsByPatientId, addTest, getAllCriticalPatients, editTest, getTestById, deleteTest } = require('../controllers/testController');
 
 // Get all tests for a specific patient
 router.get('/:patientId/tests', getTestsByPatientId);
@@ -16,5 +16,8 @@ router.put('/:testId', editTest);
 
 // Get a test by ID
 router.get('/:testId', getTestById);
+
+// Delete a test by ID
+router.delete('/:testId', deleteTest);
 
 module.exports = router;

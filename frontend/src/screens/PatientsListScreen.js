@@ -4,11 +4,12 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { getPatients, deletePatient } from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const PatientsListScreen = ({ navigation }) => {
+const PatientsListScreen = ({ navigation, route }) => {
   const [patients, setPatients] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedPatientId, setSelectedPatientId] = useState(null);
+  const { getAllCount } = route.params;
 
   useEffect(() => {
     fetchData();
@@ -20,6 +21,10 @@ const PatientsListScreen = ({ navigation }) => {
       if (userId) {
         const fetchedPatients = await getPatients(userId);
         setPatients(fetchedPatients.data);
+        if(getAllCount){
+          getAllCount(); // Refresh the patient count on the dashboard
+        }
+        
       } else {
         console.error("User ID not found in AsyncStorage");
       }
@@ -34,6 +39,9 @@ const PatientsListScreen = ({ navigation }) => {
       setIsModalVisible(false);
       Alert.alert('Deleted', 'Patient has been successfully deleted.');
       fetchData();  // Re-fetch patient list after deletion
+      if (getAllCount) {
+        getAllCount(); // Refresh the patient count on the dashboard
+      }
     } catch (error) {
       Alert.alert('Error', 'Failed to delete patient.');
     }
@@ -52,7 +60,7 @@ const PatientsListScreen = ({ navigation }) => {
         <Text style={styles.patientInfo}>{item.contactNumber}</Text>
       </TouchableOpacity>
       <View style={styles.actionContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate('EditPatient', { patientId: item._id, fetchData })} style={styles.editButton}>
+        <TouchableOpacity onPress={() => navigation.navigate('EditPatient', { patientId: item._id, fetchData,getAllCount })} style={styles.editButton}>
           <Icon name="edit" size={24} color="#ffffff" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => {
@@ -101,7 +109,7 @@ const PatientsListScreen = ({ navigation }) => {
 
       <TouchableOpacity 
         style={styles.addButton}
-        onPress={() => navigation.navigate('AddPatient', { fetchData })}
+        onPress={() => navigation.navigate('AddPatient', { fetchData ,getAllCount })}
       >
         <Icon name="add" size={24} color="white" />
       </TouchableOpacity>

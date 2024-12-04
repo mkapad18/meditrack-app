@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'rea
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { getPatientById, getTestsByPatientId, updatePatientStatus } from '../services/api';
 import dayjs from 'dayjs'; // Import dayjs for date formatting
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const PatientDetailsScreen = () => {
   const route = useRoute();
@@ -15,6 +16,7 @@ const PatientDetailsScreen = () => {
   const fetchPatientDetails = async () => {
     try {
       const response = await getPatientById(patientId);
+      console.log("fetched patient details")
       setPatient(response.data);
     } catch (error) {
       console.error("Error fetching patient details:", error);
@@ -26,6 +28,8 @@ const PatientDetailsScreen = () => {
     try {
       const response = await getTestsByPatientId(patientId);
       const tests = response.data;
+
+      console.log("fetched test and updated")
   
       // Group tests by dataType
       const groupedTests = tests.reduce((acc, test) => {
@@ -63,10 +67,19 @@ const PatientDetailsScreen = () => {
     }
   };
 
+  const handleRefresh = () => {
+    fetchPatientDetails();
+    fetchAllTestsAndUpdateStatus();
+  };
+
   useEffect(() => {
     fetchPatientDetails();
     fetchAllTestsAndUpdateStatus();
   }, [patientId]);
+  useEffect(() => {
+    fetchPatientDetails();
+    fetchAllTestsAndUpdateStatus();
+  }, []);
 
   return (
     <ScrollView style={styles.container}>
@@ -74,7 +87,7 @@ const PatientDetailsScreen = () => {
         <>
           <View style={styles.header}>
             <Image
-              source={{ uri: `https://avatar.iran.liara.run/public/${Math.round(Math.random(0,500)*10)}` }} // Random avatar
+              source={{ uri: `https://avatar.iran.liara.run/public/${Math.round(Math.random(5,300)*10)}` }} // Random avatar
               style={styles.avatar}
             />
             <Text style={styles.patientName}>{patient.name}</Text>
@@ -90,6 +103,9 @@ const PatientDetailsScreen = () => {
           {/* Recent Tests Section */}
           <View style={styles.testsContainer}>
             <Text style={styles.sectionTitle}>Recent Tests</Text>
+            <TouchableOpacity style={styles.refreshButton} onPress={handleRefresh}>
+              <Icon name="refresh" size={24} color="#004a59" />
+            </TouchableOpacity>
             {recentTests.length > 0 ? (
               recentTests.map((test, index) => (
                 <View key={index} style={styles.testItem}>
@@ -105,7 +121,7 @@ const PatientDetailsScreen = () => {
             {/* Button to View All Tests */}
             <TouchableOpacity 
               style={styles.viewAllButton}
-              onPress={() => navigation.navigate('AllTests', { patientId, fetchPatientDetails })}>
+              onPress={() => navigation.navigate('AllTests', { patientId, fetchPatientDetails,fetchAllTestsAndUpdateStatus })}>
               <Text style={styles.viewAllButtonText}>View All Tests</Text>
             </TouchableOpacity>
           </View>
@@ -158,6 +174,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
+  },
+  refreshButton: {
+    alignSelf: 'flex-end', // Align the refresh button to the right
+    marginBottom: 10,
+    position:'absolute',
+    top:0,
+    right: 25,
   },
   testItem: {
     marginBottom: 10,

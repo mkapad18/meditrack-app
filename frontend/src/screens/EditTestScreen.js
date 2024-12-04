@@ -1,67 +1,62 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet, TextInput, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import RNPickerSelect from 'react-native-picker-select';
-import axios from 'axios';
-import DateTimePicker from 'react-native-ui-datepicker';
-import dayjs from 'dayjs';
 import { updateTest, getTestById } from '../services/api';
 
 const EditTestScreen = () => {
-  const navigation = useNavigation();
   const route = useRoute();
+  const navigation = useNavigation();
   const { testId, patientId, fetchAllTests } = route.params;
 
-  const [testType, setTestType] = useState('');
   const [reading, setReading] = useState('');
-  const [testDate, setTestDate] = useState(dayjs()); // Default to current date
-  const [testTypes] = useState(['Blood Pressure', 'Respiratory Rate', 'Blood Oxygen Level']); // Example test types
+  const [dataType, setDataType] = useState('');
 
   useEffect(() => {
-    // Fetch the test details from the API when the screen loads
-    fetchTestDetails();
-  }, []);
-
-  const fetchTestDetails = async () => {
-    try {
-      console.log("getting test id from all test",testId);
+    const fetchTestDetails = async () => {
       const response = await getTestById(testId);
-      const test = response.data;
-      console.log("test recieve from datasbae",test)
-      setTestType(test.dataType);
-      setReading(test.reading);
-      setTestDate(dayjs(test.testDate)); // Assuming testDate is in ISO format
-    } catch (error) {
-      console.error("Error fetching test details:", error);
-      Alert.alert('Error', 'There was an issue fetching the test details.');
-    }
-  };
+      setReading(response.data.reading.toString());
+      setDataType(response.data.dataType);
+    };
 
-  const handleDateChange = (date) => {
-    setTestDate(date); // Update the state with the selected date
-  };
+    fetchTestDetails();
+  }, [testId]);
 
-  const handleEditTest = async () => {
-    if (!testType || !reading || !testDate) {
+  const handleUpdateTest = async () => {
+    if (!reading || !dataType) {
       Alert.alert('Error', 'Please fill in all fields.');
       return;
     }
 
-    try {
-      const updatedTest = {
-        patientId,
-        dataType: testType,
-        reading,
-        testDate: testDate.toISOString(), // Convert the date to ISO string for the database
-      };
+    const readingValue = parseFloat(reading);
+    let criticalFlage = false;
 
-      // Make a PUT request to update the test
-      const response = await updateTest(testId, updatedTest);
-      Alert.alert('Success', 'Test updated successfully!');
-      fetchAllTests(); // Refresh the tests list
-      navigation.goBack(); // Go back to the previous screen
+    if (
+      (dataType === 'Blood Pressure' && (readingValue < 50 || readingValue > 160)) ||
+      (dataType === 'Respiratory Rate' && (readingValue < 12 || readingValue > 25)) ||
+      (dataType === 'Blood Oxygen Level' && readingValue < 90) ||
+      (dataType === 'Heartbeat Rate' && (readingValue < 40 || readingValue > 120))
+    ) {
+      console.log("it is setting true")
+      criticalFlage = true;
+    }
+
+    const updatedData = {
+      reading,
+      dataType,
+      testDate: new Date().toISOString(),
+      criticalFlag:criticalFlage,
+    };
+
+    try {
+      await updateTest(testId, updatedData);
+      Alert.alert('Success', 'Test updated successfully', [
+        { text: 'OK', onPress: () => {
+          fetchAllTests();
+          navigation.goBack();
+        }},
+      ]);
     } catch (error) {
-      console.error("Error updating test:", error.response ? error.response.data : error.message);
+      console.error("Error updating test:", error);
       Alert.alert('Error', 'There was an issue updating the test.');
     }
   };
@@ -69,21 +64,6 @@ const EditTestScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Edit Test</Text>
-
-      {/* Test Type Drop-Down using RNPickerSelect */}
-      <Text style={styles.label}>Test Type</Text>
-      <RNPickerSelect
-        onValueChange={(value) => setTestType(value)}
-        items={testTypes.map((type) => ({ label: type, value: type }))}
-        style={{
-          inputIOS: styles.picker,
-          inputAndroid: styles.picker,
-        }}
-        value={testType}
-      />
-
-      {/* Test Reading */}
-      <Text style={styles.label}>Test Reading</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter test reading"
@@ -91,18 +71,7 @@ const EditTestScreen = () => {
         onChangeText={setReading}
         keyboardType="numeric"
       />
-
-      {/* Test Date */}
-      <Text style={styles.label}>Test Date</Text>
-      <DateTimePicker
-        mode="single"
-        height={300}
-        date={testDate}
-        onChange={(params) => handleDateChange(params.date)}
-      />
-
-      {/* Submit Button */}
-      <Button title="Update Test" onPress={handleEditTest} />
+      <Button title="Update Test" onPress={handleUpdateTest} />
     </View>
   );
 };
@@ -117,18 +86,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 8,
-    color: '#333',
-  },
-  picker: {
-    height: 50,
-    borderColor: '#ddd',
-    borderWidth: 1,
-    paddingLeft: 10,
     marginBottom: 20,
   },
   input: {

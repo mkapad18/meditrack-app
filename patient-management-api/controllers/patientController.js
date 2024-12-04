@@ -1,4 +1,5 @@
 const Patient = require('../models/Patient');
+const Test = require('../models/Test');
 
 
 const getAllPatients = async (req, res) => {
@@ -46,6 +47,7 @@ const updatePatient = async (req, res) => {
       { name, dob, gender, address, contactNumber },
       { new: true }
     );
+    
     if (!patient) return res.status(404).json({ message: 'Patient not found' });
     res.json(patient);
   } catch (err) {
@@ -57,7 +59,9 @@ const updatePatient = async (req, res) => {
 
 const deletePatient = async (req, res) => {
   try {
-    const patient = await Patient.findByIdAndDelete(req.params.id);
+    const patientId = req.params.id;
+    await Test.deleteMany({ patientId });
+    const patient = await Patient.findByIdAndDelete(patientId);
     if (!patient) return res.status(404).json({ message: 'Patient not found' });
     res.json({ message: 'Patient deleted successfully' });
   } catch (err) {

@@ -16,12 +16,12 @@ const DashboardScreen = ({ navigation }) => {
         if (userId) {
             try {
                 const patients = await getPatients(userId);
-                console.log("Patients Data:", patients.data); // Log the patients data
+                // console.log("Patients Data:", patients.data); // Log the patients data
                 setPatientsCount(patients.data.length);
 
                 // Filter critical patients from the fetched patients
                 const criticalPatients = patients.data.filter(patient => patient.status === 'Critical');
-                console.log("Critical Patients Data:", criticalPatients); // Log critical patients data
+                // console.log("Critical Patients Data:", criticalPatients); // Log critical patients data
                 setCriticalPatientsCount(criticalPatients.length);
             } catch (error) {
                 console.error("Error fetching patients:", error); // Log any errors
@@ -31,22 +31,10 @@ const DashboardScreen = ({ navigation }) => {
         }
     };
 
-    const fetchAllCount = async () => {
-        const userId = await AsyncStorage.getItem("userId");
-        if (userId) {
-            try {
-                const patients = await getPatients(userId);
-                setPatientsCount(patients.data.length);
-                const criticalPatients = patients.data.filter(patient => patient.status === 'Critical');
-                setCriticalPatientsCount(criticalPatients.length);
-            } catch (error) {
-                console.error("Error fetching patients:", error);
-            }
-        }
-    };
+
 
     const widgets = [
-        { title: 'Patients', icon: 'people', value: `${patientsCount}`, onPress: () => navigation.navigate('PatientsList', fetchAllCount) },
+        { title: 'Patients', icon: 'people', value: `${patientsCount}`, onPress: () => navigation.navigate('PatientsList', { getAllCount }) },
         { title: 'Critical Patients', icon: 'accessibility', value: `${criticalPatientsCount}`, onPress: () => navigation.navigate('CriticalPatients') },
         { title: 'Profile', icon: 'account-circle', onPress: () => navigation.navigate('Profile') },
     ];

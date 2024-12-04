@@ -130,4 +130,18 @@ const getTestById = async (req, res) => {
   }
 };
 
-module.exports = { getTestsByPatientId, addTest, getAllCriticalPatients, editTest, getTestById };
+const deleteTest = async (req, res) => {
+  const { testId } = req.params;
+  try {
+    const deletedTest = await Test.findByIdAndDelete(testId);
+    if (!deletedTest) {
+      return res.status(404).json({ message: 'Test not found' });
+    }
+    res.json({ message: 'Test deleted successfully' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+module.exports = { getTestsByPatientId, addTest, getAllCriticalPatients, editTest, getTestById, deleteTest };

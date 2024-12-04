@@ -1,7 +1,7 @@
 // src/services/api.js
 import axios from 'axios';
 
-const API_URL = 'http://10.0.0.30:3000';
+const API_URL = 'http://10.0.0.30:3000/';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -22,10 +22,15 @@ export const getCriticalPatients = async (userId) => api.get(`/api/patients/crit
 
 export const getTestsByPatientId = (patientId) => api.get(`/api/tests/${patientId}/tests`);
 export const addPatientTest = (patientId, testData) => {
-  api.post(`/api/tests/${patientId}/tests`, testData);
+  return api.post(`/api/tests/${patientId}/tests`, testData);
 };
 export const updateTest = (testId, updatedData) => {
   return api.put(`/api/tests/${testId}`, updatedData);
+};
+
+// New function to delete a test
+export const deleteTest = (testId) => {
+  return api.delete(`/api/tests/${testId}`);
 };
 
 // Function to update patient status

@@ -10,7 +10,7 @@ import { addPatientTest } from '../services/api';
 const AddTestScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const { patientId, fetchAllTests, fetchPatientDetails } = route.params;
+  const { patientId, fetchAllTests, fetchPatientDetails,fetchAllTestsAndUpdateStatus } = route.params;
 
   const [testType, setTestType] = useState('');
   const [reading, setReading] = useState('');
@@ -41,16 +41,17 @@ const AddTestScreen = () => {
       };
 
       await addPatientTest(patientId, newTest);
-      Alert.alert('Success', 'Test added successfully!');
-
+      fetchAllTests()
       // Call fetchAllTests and fetchPatientDetails if they are defined
-      if (fetchAllTests) {
-        fetchAllTests(); // Refresh the tests list
-        console.log("Called fetchAllTests after adding test."); // Debug log
+      if (fetchAllTests && fetchPatientDetails && fetchAllTestsAndUpdateStatus) {
+        await fetchAllTests(); // Update the AllTestsScreen
+        await fetchAllTestsAndUpdateStatus(); // Update the recent tests in DashboardScreen
+        await fetchPatientDetails(); // Update patient details if needed
       }
-      if (fetchPatientDetails) {
-        fetchPatientDetails(); // Refresh patient details
-      }
+      
+      Alert.alert('Success', 'Test added successfully', [
+        { text: 'OK', onPress: () => navigation.navigate('AllTests', { patientId }) }
+      ]);
 
       navigation.goBack();
     } catch (error) {
@@ -102,7 +103,7 @@ const AddTestScreen = () => {
 
       {/* Submit Button */}
       <TouchableOpacity style={styles.btn}>
-      <Button title="Add Test" color={"#ffffff"} onPress={handleAddTest} />
+      <Button title="Add Test" color={"#004a59"} onPress={handleAddTest} />
       </TouchableOpacity>
     </View>
   );

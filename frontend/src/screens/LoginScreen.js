@@ -77,7 +77,7 @@ const LoginScreen = ({ navigation }) => {
         {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
 
         <TouchableOpacity style={styles.btn} onPress={handleLogin}>
-          <Button title="Login" color={'#ffffff'} onPress={handleLogin}/>
+          <Button title="Login" color={'#004a59'} onPress={handleLogin}/>
         </TouchableOpacity>
         
         <Text style={styles.registerText}>

@@ -1,10 +1,9 @@
-// src/screens/EditPatientScreen.js
 import React, { useState, useEffect } from 'react';
 import { View, TextInput, Button, StyleSheet, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { getPatientById, updatePatient } from '../services/api';
 
 const EditPatientScreen = ({ route, navigation }) => {
-  const { patientId, fetchData } = route.params;
+  const { patientId, fetchData ,getAllCount} = route.params;
   const [name, setName] = useState('');
   const [dob, setDob] = useState('');
   const [gender, setGender] = useState('');
@@ -35,7 +34,7 @@ const EditPatientScreen = ({ route, navigation }) => {
       await updatePatient(patientId, updatedPatientData);
       fetchData();
       Alert.alert('Success', 'Patient updated successfully', [
-        { text: 'OK', onPress: () => navigation.navigate('PatientsList') }
+        { text: 'OK', onPress: () => navigation.navigate('PatientsList',{getAllCount}) }
       ]);
     } catch (error) {
       Alert.alert('Error', 'Failed to update patient');
@@ -76,7 +75,7 @@ const EditPatientScreen = ({ route, navigation }) => {
         keyboardType="phone-pad"
       />
        <TouchableOpacity style={styles.btn}>
-      <Button title="Update Patient" onPress={handleUpdatePatient} color="#ffffff" />
+      <Button title="Update Patient" onPress={handleUpdatePatient} color="#004a59" />
       </TouchableOpacity>
     </ScrollView>
   );

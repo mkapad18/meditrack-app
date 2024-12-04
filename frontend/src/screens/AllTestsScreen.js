@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { getTestsByPatientId } from '../services/api';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { getTestsByPatientId, deleteTest } from '../services/api';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import dayjs from 'dayjs';
 
 const AllTestsScreen = ({ route }) => {
   const navigation = useNavigation();
-  const { patientId } = route.params;
+  const { patientId, fetchPatientDetails, fetchAllTestsAndUpdateStatus } = route.params || {};
   const [tests, setTests] = useState([]);
 
   useEffect(() => {
@@ -15,6 +15,7 @@ const AllTestsScreen = ({ route }) => {
   }, []);
 
   const fetchAllTests = async () => {
+    console.log(patientId);
     console.log("Fetching all tests...");
     try {
       const response = await getTestsByPatientId(patientId);
@@ -24,13 +25,27 @@ const AllTestsScreen = ({ route }) => {
     }
   };
 
+  const handleDeleteTest = async (testId) => {
+    try {
+      await deleteTest(testId);
+      Alert.alert('Deleted', 'Test has been successfully deleted.');
+      fetchAllTests();
+    } catch (error) {
+      Alert.alert('Error', 'Failed to delete test.');
+    }
+  };
+
+  const handleRefresh = () => {
+    fetchAllTests(); // Call the fetch function to refresh data
+  };
+
   if (tests.length === 0) {
     return (
       <View style={styles.noTestsContainer}>
         <Text style={styles.noTestsText}>No tests found</Text>
         <TouchableOpacity 
           style={styles.addButton}
-          onPress={() => navigation.navigate('AddTest', { patientId, fetchAllTests })}>
+          onPress={() => navigation.navigate('AddTest', { patientId, fetchAllTests, fetchPatientDetails })}>
           <Icon name="add" size={24} color="white" />
         </TouchableOpacity>
       </View>
@@ -42,6 +57,11 @@ const AllTestsScreen = ({ route }) => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Text style={styles.title}>All Tests</Text>
         
+        {/* Refresh Button */}
+        <TouchableOpacity style={styles.refreshButton} onPress={handleRefresh}>
+          <Icon name="refresh" size={24} color="#004a59" />
+        </TouchableOpacity>
+
         {tests.map((test, index) => (
           <View key={index} style={styles.testItem}>
             <Text style={styles.testInfo}>Date: {dayjs(test.testDate).format('MM/DD/YYYY')}</Text>
@@ -58,9 +78,15 @@ const AllTestsScreen = ({ route }) => {
                 })}>
                 <Text style={styles.editButtonText}>Edit</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
+              <TouchableOpacity  
                 style={styles.deleteButton}
-                onPress={() => {/* Handle delete action */}}>
+                onPress={async () => {
+                  await handleDeleteTest(test._id);
+                  fetchAllTests();
+                  if (fetchPatientDetails) {
+                    fetchPatientDetails();
+                  }
+                }}>
                 <Text style={styles.deleteButtonText}>Delete</Text>
               </TouchableOpacity>
             </View>
@@ -71,7 +97,7 @@ const AllTestsScreen = ({ route }) => {
       {/* Floating action button */}
       <TouchableOpacity 
         style={styles.addButton}
-        onPress={() => navigation.navigate('AddTest', { patientId, fetchAllTests })}>
+        onPress={() => navigation.navigate('AddTest', { patientId, fetchAllTests, fetchPatientDetails, fetchAllTestsAndUpdateStatus })}>
         <Icon name="add" size={24} color="white" />
       </TouchableOpacity>
     </View>
@@ -102,6 +128,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+  },
+  refreshButton: {
+    alignSelf: 'flex-end', // Align the refresh button to the right
+    marginBottom: 10,
+    position:'absolute',
+    top:25,
+    right: 25,
   },
   testItem: {
     backgroundColor: '#ffffff',
