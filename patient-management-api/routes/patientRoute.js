@@ -6,7 +6,7 @@ const Patient = require('../models/Patient');
 
 // Get all patients for a specific user
 router.get('/', async (req, res) => {
-    const userId = req.query.userId; // Get userId from query parameters
+    const userId = "6742034133d26d18e78dfb8d"; // Get userId from query parameters
     console.log("Received userId:", userId); // Log the received userId
     try {
         const patients = await Patient.find({ userId }); // Filter patients by userId
